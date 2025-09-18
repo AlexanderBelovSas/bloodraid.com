@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Dashboard — BLOODRAIDRRR</title>
+<style>
+  html,body{height:100%;margin:0;font-family:Inter,Segoe UI,Roboto,Arial;background:#0b1020;color:#fff;display:flex;align-items:center;justify-content:center}
+  .wrap{width:760px;padding:36px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02), rgba(0,0,0,0.35));box-shadow:0 10px 40px rgba(0,0,0,.6);}
+  h1{margin:0 0 6px}
+  .small{color:rgba(255,255,255,0.8);margin-bottom:18px}
+  .meta{display:flex;gap:16px;align-items:center}
+  .chip{padding:8px 12px;border-radius:999px;background:rgba(255,255,255,0.03);font-weight:600}
+  .btn{margin-left:auto;padding:8px 12px;border-radius:8px;border:0;background:#ff6b6b;color:#fff;cursor:pointer}
+  .danger{background:#555;border:1px solid rgba(255,255,255,0.06)}
+  pre{background:rgba(0,0,0,0.3);padding:12px;border-radius:8px;overflow:auto}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Welcome, <span id="uname">—</span></h1>
+    <div class="small">This is a demo dashboard (client-side session).</div>
+
+    <div class="meta">
+      <div class="chip" id="joined">Joined: —</div>
+      <button class="btn" id="logout">Log Out</button>
+    </div>
+
+    <section style="margin-top:18px">
+      <h3>Stored account data (localStorage)</h3>
+      <pre id="dump" style="min-height:120px">Loading…</pre>
+    </section>
+  </div>
+
+<script>
+function getUsers(){ try { return JSON.parse(localStorage.getItem('br_users')||'{}'); } catch(e){ return {} } }
+function currentUser(){ return localStorage.getItem('br_session') || null; }
+
+(function init(){
+  const user = currentUser();
+  if(!user){
+    // not logged in → redirect to login
+    window.location = 'login.html';
+    return;
+  }
+
+  document.getElementById('uname').textContent = user;
+  const users = getUsers();
+  const data = users[user] || {};
+  document.getElementById('joined').textContent = 'Created: ' + (data.created ? new Date(data.created).toLocaleString() : '—');
+
+  // show sanitized dump (do not display raw hashed password in real apps; here for demo)
+  const safe = JSON.parse(JSON.stringify(users));
+  for(const k in safe){
+    if(safe[k].passHash) safe[k].passHash = '[hidden]';
+    if(safe[k].salt) safe[k].salt = '[hidden]';
+  }
+  document.getElementById('dump').textContent = JSON.stringify(safe, null, 2);
+
+  document.getElementById('logout').addEventListener('click', ()=>{
+    localStorage.removeItem('br_session');
+    window.location = 'index.html';
+  });
+})();
+</script>
+</body>
+</html>

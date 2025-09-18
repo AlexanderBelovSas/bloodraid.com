@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Sign Up — BLOODRAIDRRR</title>
+<style>
+  html,body{height:100%;margin:0;font-family:Inter,Segoe UI,Roboto,Arial;background:#0b0b0f;color:#fff;display:flex;align-items:center;justify-content:center}
+  .box{width:360px;padding:28px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02), rgba(0,0,0,0.25));box-shadow:0 10px 30px rgba(0,0,0,0.6);}
+  h2{margin:0 0 14px;font-weight:600}
+  input{width:100%;padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.03);color:#fff;margin:9px 0;outline:none}
+  button{width:100%;padding:10px;border-radius:10px;border:0;background:#ff6b6b;font-weight:700;color:#fff;margin-top:8px;cursor:pointer}
+  p.small{font-size:13px;color:rgba(255,255,255,0.7);margin-top:10px;text-align:center}
+  .msg{margin-top:10px;font-size:13px;color:#ffd1d1;min-height:18px}
+  a.link{color:#fff;text-decoration:underline}
+</style>
+</head>
+<body>
+  <div class="box">
+    <h2>Create account</h2>
+    <form id="signupForm">
+      <input name="username" placeholder="Username" required autocomplete="off" />
+      <input name="email" placeholder="Email (optional)" type="email" autocomplete="off" />
+      <input name="password" placeholder="Password" type="password" required />
+      <button type="submit">Sign Up</button>
+    </form>
+    <p class="small">Already registered? <a class="link" href="login.html">Log in</a></p>
+    <div class="msg" id="msg"></div>
+  </div>
+
+<script>
+/*
+Client-side account store using localStorage.
+Users stored under key 'br_users' as object:
+  { username1: { email, passHash, salt }, username2: ... }
+Session stored under 'br_session' as username string.
+Uses Web Crypto SHA-256 for hashing (client-side).
+*/
+async function hashPassword(password, salt) {
+  const enc = new TextEncoder();
+  const data = enc.encode(password + salt);
+  const digest = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+function randomSalt(len=12){
+  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let s=''; for(let i=0;i<len;i++) s += chars[Math.floor(Math.random()*chars.length)];
+  return s;
+}
+function getUsers(){
+  try { return JSON.parse(localStorage.getItem('br_users')||'{}'); } catch(e){ return {} }
+}
+function setUsers(u){ localStorage.setItem('br_users', JSON.stringify(u)); }
+
+document.getElementById('signupForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  const form = e.target;
+  const username = form.username.value.trim();
+  const email = form.email.value.trim();
+  const password = form.password.value;
+
+  const msg = document.getElementById('msg');
+  if(!username || !password){ msg.textContent='Fill required fields'; return; }
+
+  const users = getUsers();
+  if(users[username]){ msg.textContent='Username already exists'; return; }
+
+  const salt = randomSalt();
+  const passHash = await hashPassword(password, salt);
+
+  users[username] = { email: email || null, passHash, salt, created: Date.now() };
+  setUsers(users);
+
+  // set session
+  localStorage.setItem('br_session', username);
+  // go to dashboard
+  window.location = 'dashboard.html';
+});
+</script>
+</body>
+</html>

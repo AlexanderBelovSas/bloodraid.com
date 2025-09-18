@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>BLOODRAIDRRR</title>
+<style>
+  :root{--accent:#ff6b6b;--glass:rgba(0,0,0,0.45);}
+  html,body{height:100%;margin:0;font-family:Inter,Segoe UI,Roboto,system-ui,-apple-system,Arial;}
+  body{
+    display:flex;align-items:center;justify-content:center;
+    background-image: url('https://images.unsplash.com/photo-1517949908114-2a4e6e3fe6be?auto=format&fit=crop&w=1600&q=60');
+    background-size:cover;background-position:center;
+    color:#fff;
+  }
+  .overlay{position:fixed;inset:0;background:linear-gradient(180deg, rgba(10,10,20,0.25), rgba(10,10,20,0.5));}
+  .card{
+    position:relative;z-index:1;
+    width:min(920px,92%);text-align:center;
+    padding:6rem 2.5rem;border-radius:14px;
+    backdrop-filter: blur(6px);
+    background: linear-gradient(180deg, rgba(30,30,40,0.2), rgba(10,10,20,0.3));
+    box-shadow:0 10px 30px rgba(0,0,0,0.45);
+  }
+  h1{font-size:48px;margin:0 0 .25rem;letter-spacing:1px;}
+  .subtitle{font-size:20px;margin:0 0 1rem;opacity:.95}
+  .tag{margin:0 0 1.6rem;color:rgba(255,255,255,.85)}
+  .btns{display:flex;gap:14px;align-items:center;justify-content:center;}
+  .btn{
+    padding:12px 22px;border-radius:999px;border:0;background:var(--accent);color:#fff;
+    text-decoration:none;font-weight:600;box-shadow:0 6px 18px rgba(255,107,107,0.12);
+  }
+  .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.22);}
+  footer{margin-top:1.4rem;color:rgba(255,255,255,0.75);font-size:13px}
+  @media (max-width:520px){ h1{font-size:34px} .card{padding:3.5rem 1.2rem} }
+</style>
+</head>
+<body>
+  <div class="overlay"></div>
+  <div class="card" role="main">
+    <h1>BLOODRAIDRRR</h1>
+    <div class="subtitle">წმინდანი</div>
+    <div class="tag">A minimal landing + auth UI (client-side demo)</div>
+
+    <div class="btns">
+      <a class="btn" href="signup.html">Sign Up</a>
+      <a class="btn secondary" href="login.html">Log In</a>
+      <a class="btn secondary" id="goDash" href="dashboard.html" style="display:none">Dashboard</a>
+    </div>
+
+    <footer id="notice">Open the Sign Up page to create a demo account (saved locally).</footer>
+  </div>
+
+<script>
+  // Show Dashboard button if user already logged in
+  (function(){
+    const session = localStorage.getItem('br_session');
+    if(session) document.getElementById('goDash').style.display = 'inline-block';
+  })();
+</script>
+</body>
+</html>
